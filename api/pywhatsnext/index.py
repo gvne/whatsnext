@@ -105,6 +105,9 @@ def list_playlists():
     return "list_playlists Not implemented", 500
 
 def playlist_to_next(playlist_id):
+    """
+    Change a playlist's current song to the next one
+    """
     # get playlist
     playlist_dict, status_code = get_playlist_details(playlist_id)
     if status_code != 200:
@@ -138,6 +141,9 @@ def handle_method(method, event):
     return "UNKNOWN METHOD", 500
 
 def response(message, status_code):
+    """
+    Shape a valid http response from a message and status code
+    """
     output = {
         'statusCode': str(status_code),
         'headers': {
@@ -160,6 +166,12 @@ def lambda_handler(event, context):
             e.status_code
         )
     except InvalidBody as e:
-        return response({'message': e.message}, 400)
+        return response(
+            {'message': e.message},
+            400
+        )
     except Exception as e:
-        return response({'message': str(e)}, 500)
+        return response(
+            {'message': str(e)},
+            500
+        )

@@ -1,0 +1,4 @@
+deploy.sh
+*.pyc
+__pycache__
+venv
