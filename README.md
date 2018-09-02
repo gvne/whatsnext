@@ -21,6 +21,16 @@ aws cloudformation package --template ./api/sam.yaml --s3-bucket NameOfABucket -
 aws cloudformation deploy --template-file /tmp/post-saml.yaml --stack-name whatsnext --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 ```
 
+### Unit tests
+
+To run the unit test, you need to create a test table on AWS Dynamodb named `whatsnext-unit-test` with a primary key named `id` of type `string`  
+
+Then, run them using:
+```bash
+cd api
+python -m unittest discover
+```
+
 ## Application
 
 Coming soon...
