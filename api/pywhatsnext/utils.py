@@ -1,5 +1,5 @@
 import logging
-from exception import QueryException
+from pywhatsnext.exception import QueryException
 
 
 def get_status_code(query_response):

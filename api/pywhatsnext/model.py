@@ -1,4 +1,8 @@
-from pywhatsnext.exception import InvalidBody
+import uuid
+from pywhatsnext.exception import InvalidBody, NotFoundException
+from pywhatsnext import settings
+
+from pywhatsnext.utils import raise_for_response, get_status_code, get_source_url
 
 
 class Model:
@@ -36,6 +40,38 @@ class Playlist(Model):
         self.owner = None
         self.songs = []
         self.current_song = None
+
+    @staticmethod
+    def from_id(id):
+        """
+        Read a playlist from the database
+        Raise a NotFoundException if object does not exists
+        """
+        response = settings.database.get_item(Key={'id': id})
+        raise_for_response(response)
+        if not "Item" in response.keys():
+            raise NotFoundException("Playlist with id " + str(id) + " couldn't be found")
+        playlist = Playlist()
+        playlist.init_from_body(response["Item"])
+        return playlist
+
+    def save(self):
+        """
+        write to the database
+        """
+        # Auto set the id
+        if not self.id:
+            self.id = str(uuid.uuid1())
+        # write to database
+        response = settings.database.put_item(Item=self.to_dict())
+        raise_for_response(response)
+
+    def delete(self):
+        """
+        removes the playlist from the database
+        """
+        response = settings.database.delete_item(Key={'id': str(self.id)})
+        raise_for_response(response)
 
     def append(self, song):
         self.songs.append(song.to_dict())

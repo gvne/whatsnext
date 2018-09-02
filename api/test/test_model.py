@@ -63,3 +63,34 @@ class TestModel(unittest.TestCase):
         self.assertEqual(playlist.current_song['id'], "asongid")
         playlist.next()
         self.assertEqual(playlist.current_song['id'], "anothersongid")
+
+    def test_read_write_playlist(self):
+        # fail to read
+        with self.assertRaises(pywhatsnext.NotFoundException):
+            pywhatsnext.Playlist.from_id("anidthatdoesntexist")
+
+        playlist = pywhatsnext.Playlist()
+
+        # Successful read and write
+        playlist.save()
+
+        another_playlist = pywhatsnext.Playlist.from_id(playlist.id)
+        self.assertEqual(playlist.to_dict(), another_playlist.to_dict())
+
+        # update the song needs to get a save to be sent to database
+        song_body = { "id": "1", "source": "a song source" }
+        playlist.append(pywhatsnext.Song.from_body(song_body))
+        self.assertNotEqual(
+            playlist.to_dict(),
+            pywhatsnext.Playlist.from_id(playlist.id).to_dict()
+        )
+        playlist.save()
+        self.assertEqual(
+            playlist.to_dict(),
+            pywhatsnext.Playlist.from_id(playlist.id).to_dict()
+        )
+
+        # test delete
+        playlist.delete()
+        with self.assertRaises(pywhatsnext.NotFoundException):
+            pywhatsnext.Playlist.from_id(playlist.id)
