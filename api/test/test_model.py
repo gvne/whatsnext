@@ -7,12 +7,12 @@ class TestModel(unittest.TestCase):
         song_id = 12
         song_source = "https://www.youtube.com/watch?v=wTqEB0MyGdY"
         original_body = {
-            "id": song_id,
+            "id": 12,
             "source": song_source
         }
         song = pywhatsnext.Song()
         song.init_from_body(original_body)
-        self.assertEqual(song.id, song_id)
+        self.assertNotEqual(song.id, None)
         self.assertEqual(song.source, song_source)
         self.assertEqual(song.to_dict(), original_body)
 
@@ -78,7 +78,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(playlist.to_dict(), another_playlist.to_dict())
 
         # update the song needs to get a save to be sent to database
-        song_body = { "id": "1", "source": "a song source" }
+        song_body = { "source": "a song source" }
         playlist.append(pywhatsnext.Song.from_body(song_body))
         self.assertNotEqual(
             playlist.to_dict(),

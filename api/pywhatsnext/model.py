@@ -6,6 +6,10 @@ from pywhatsnext.utils import raise_for_response, get_status_code, get_source_ur
 
 
 class Model:
+    def __init__(self):
+        # Auto set the id
+        self.id = str(uuid.uuid1())
+
     def init_from_body(self, body):
         for key, value in body.items():
             self.__set_property(key, value)
@@ -24,7 +28,7 @@ class Model:
 
 class Song(Model):
     def __init__(self):
-        self.id = None
+        super(Song, self).__init__()
         self.source = None
 
     @staticmethod
@@ -36,7 +40,7 @@ class Song(Model):
 
 class Playlist(Model):
     def __init__(self):
-        self.id = None
+        super(Playlist, self).__init__()
         self.owner = None
         self.songs = []
         self.current_song = None
@@ -59,10 +63,6 @@ class Playlist(Model):
         """
         write to the database
         """
-        # Auto set the id
-        if not self.id:
-            self.id = str(uuid.uuid1())
-        # write to database
         response = settings.database.put_item(Item=self.to_dict())
         raise_for_response(response)
 
