@@ -1,6 +1,6 @@
 import os
 import json
-import boto3
+# import boto3
 import uuid
 
 from exception import QueryException, InvalidBody
@@ -8,9 +8,9 @@ from utils import raise_for_response, get_status_code, get_source_url
 from model import Playlist, Song
 
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-table = dynamodb.Table(os.environ["DATABASE_TABLE"])
-DEFAULT_PAGE_LIMIT = 25  # default number of output per page when listing
+# dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+# table = dynamodb.Table(os.environ["DATABASE_TABLE"])
+# DEFAULT_PAGE_LIMIT = 25  # default number of output per page when listing
 
 # def handle_list(event):
 #     """
