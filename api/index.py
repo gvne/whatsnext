@@ -99,6 +99,14 @@ def playlist_to_next(playlist_id):
     except pywhatsnext.NotFoundException:
         return {"message": "Not found"}, 404
 
+def delete_playlist(playlist_id):
+    try:
+        playlist = pywhatsnext.Playlist.from_id(playlist_id)
+        playlist.delete()
+        return "", 200
+    except pywhatsnext.NotFoundException:
+        return {"message": "Not found"}, 404
+
 def handle_method(method, event):
     if method == "POST":
         if event['resource'] == "/v1/playlist/{playlistID}/next":
@@ -111,6 +119,8 @@ def handle_method(method, event):
     elif method == "PUT":
         return append_to_playlist(event['pathParameters']['playlistID'],
                                   event['body'])
+    elif method == "DELETE":
+        return delete_playlist(event['pathParameters']['playlistID'])
     return "UNKNOWN METHOD", 500
 
 def response(message, status_code):

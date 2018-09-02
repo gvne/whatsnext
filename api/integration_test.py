@@ -29,3 +29,7 @@ response.raise_for_status()
 should_be_same_playlist = response.json()
 
 assert should_be_same_playlist == playlist
+
+# remove the playlist
+response = requests.delete(args.origin + "/v1/playlist/" + playlist_id)
+response.raise_for_status()

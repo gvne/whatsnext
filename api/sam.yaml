@@ -75,3 +75,8 @@ Resources:
           Properties:
             Path: /v1/playlist/{playlistID}/next
             Method: post
+        DeletePlaylist:
+          Type: Api
+          Properties:
+            Path: /v1/playlist/{playlistID}
+            Method: delete
