@@ -1,11 +1,8 @@
 import os
 import json
 # import boto3
-import uuid
 
-from exception import QueryException, InvalidBody
-from utils import raise_for_response, get_status_code, get_source_url
-from model import Playlist, Song
+import pywhatsnext
 
 
 # dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
@@ -58,48 +55,34 @@ def get_playlist_details(playlist_id):
     """
     Return playlist details
     """
-    response = table.get_item(Key={'id': playlist_id})
-    raise_for_response(response)
-    if not "Item" in response.keys():
+    try:
+        playlist = pywhatsnext.Playlist.from_id(playlist_id)
+        return playlist.to_dict(), 200
+    except pywhatsnext.NotFoundException:
         return {"message": "Not found"}, 404
-    return response["Item"], get_status_code(response)
 
 def create_playlist():
     """
     Make a new playlist
     """
-    playlist = Playlist()
-    playlist.id = str(uuid.uuid1())
-    response = table.put_item(Item=playlist.to_dict())
-    raise_for_response(response)
-
-    item, _ = get_playlist_details(playlist.id)
-    return item, 201
+    playlist = pywhatsnext.Playlist()
+    playlist.save()
+    return playlist.to_dict(), 201
 
 def append_to_playlist(playlist_id, body):
     """
     Append a new song to a playlist
     """
-    playlist_dict, status_code = get_playlist_details(playlist_id)
-    if status_code != 200:
-        return playlist_dict, status_code
-
     try:
-        json_body = json.loads(body)
-    except:
-        raise InvalidBody("Body is not a valid json")
-
-    song = Song.from_body(json_body)
-    song.id = str(uuid.uuid1())
-    playlist = Playlist.from_body(playlist_dict)
-    playlist.append_song(song)
-    response = table.put_item(Item=playlist.to_dict())
-    raise_for_response(response)
-
-    item, status_code = get_playlist_details(playlist.id)
-    if status_code == 200:
-        status_code = 201
-    return item, status_code
+        playlist = pywhatsnext.Playlist.from_id(playlist_id)
+        song = pywhatsnext.Song.from_body(json.loads(body))
+        playlist.append(song)
+        playlist.save()
+        return playlist.to_dict(), 200
+    except pywhatsnext.NotFoundException:
+        return {"message": "Not found"}, 404
+    except json.decoder.JSONDecodeError:
+        raise pywhatsnext.InvalidBody("Body does not seem to be a valid json")
 
 def list_playlists():
     return "list_playlists Not implemented", 500
@@ -108,23 +91,13 @@ def playlist_to_next(playlist_id):
     """
     Change a playlist's current song to the next one
     """
-    # get playlist
-    playlist_dict, status_code = get_playlist_details(playlist_id)
-    if status_code != 200:
-        return playlist_dict, status_code
-    playlist = Playlist.from_body(playlist_dict)
-
-    # move to next
-    playlist.next()
-
-    # save playlist
-    response = table.put_item(Item=playlist.to_dict())
-    raise_for_response(response)
-
-    item, status_code = get_playlist_details(playlist.id)
-    if status_code == 200:
-        status_code = 201
-    return item, status_code
+    try:
+        playlist = pywhatsnext.Playlist.from_id(playlist_id)
+        playlist.next()
+        playlist.save()
+        return playlist.to_dict(), 200
+    except pywhatsnext.NotFoundException:
+        return {"message": "Not found"}, 404
 
 def handle_method(method, event):
     if method == "POST":
@@ -160,12 +133,12 @@ def lambda_handler(event, context):
         method = event['httpMethod']
         body, code = handle_method(method, event)
         return response(body, code)
-    except QueryException as e:
+    except pywhatsnext.QueryException as e:
         return response(
             {'message': 'Error when querying the database'},
             e.status_code
         )
-    except InvalidBody as e:
+    except pywhatsnext.InvalidBody as e:
         return response(
             {'message': e.message},
             400
