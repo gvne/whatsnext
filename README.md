@@ -33,4 +33,12 @@ python -m unittest discover
 
 ## Application
 
-Coming soon...
+The application is based on Angular.  
+For development puposes, we give access to a docker container.
+```bash
+docker build -t whatsnext-app -f Dockerfile.app .
+# for interactive prompt
+docker run -it --rm -v$(pwd):/home/node/app whatsnext-app bash
+# for starting the development server on port 4200
+docker run -v$(pwd):/home/node/app -p4200:4200 whatsnext-app
+```
