@@ -7,7 +7,7 @@ import { MasterComponent }   from './master/master.component';
 const routes: Routes = [
   { path: '', redirectTo: '/index', pathMatch: 'full' },
   { path: 'index', component: IndexComponent },
-  { path: 'master', component: MasterComponent }
+  { path: 'master/:id', component: MasterComponent }
 ];
 
 @NgModule({

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-master',
@@ -6,11 +7,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./master.component.css']
 })
 export class MasterComponent implements OnInit {
+  id: String;
 
-  constructor() { }
+  constructor(
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
-    console.log("In master component");
+    this.id = this.route.snapshot.paramMap.get('id');
   }
 
 }
