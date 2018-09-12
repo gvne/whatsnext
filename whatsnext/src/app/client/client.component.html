@@ -1,3 +1,5 @@
-<p>
-  client works with id: {{id}}!
-</p>
+<p>{{success_message}}</p>
+<p>{{error_message}}</p>
+
+<input #videoInput placeholder="video id"/>
+<button (click)="appendVideo(videoInput.value)">Append !</button>
