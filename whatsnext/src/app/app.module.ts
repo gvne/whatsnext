@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule }    from '@angular/common/http';
 
+import { YoutubePlayerModule } from 'ngx-youtube-player';
+
 import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
 import { MasterComponent } from './master/master.component';
@@ -18,7 +20,8 @@ import { WINDOW_PROVIDERS } from './window.provider';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    YoutubePlayerModule
   ],
   providers: [
     WINDOW_PROVIDERS
