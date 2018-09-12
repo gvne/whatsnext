@@ -10,12 +10,14 @@ import { MasterComponent } from './master/master.component';
 import { AppRoutingModule } from './/app-routing.module';
 
 import { WINDOW_PROVIDERS } from './window.provider';
+import { ClientComponent } from './client/client.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IndexComponent,
-    MasterComponent
+    MasterComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,
