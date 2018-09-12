@@ -13,8 +13,10 @@ import { Playlist, Song } from '../objects';
   styleUrls: ['./master.component.css']
 })
 export class MasterComponent implements OnInit {
-  id: string;
-  playlistDoesNotExist: boolean;
+  player: YT.Player;
+  private id: string;
+  private video_id: string;
+  private playlistDoesNotExist: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,12 +38,38 @@ export class MasterComponent implements OnInit {
     let future = this.http.get<Playlist>(API_URL + "/playlist/" + this.id);
     future.subscribe(
       playlist => {
-        console.log(playlist);
+        if (playlist.current_song) {
+          updateCurrentVideo(playlist.current_song.id);
+        }
+        // restart another update in 10seconds
+        setTimeout(() => { this.updateInterface(); }, 10000);
       }
       error => {
         if (error.status == 404) {
           this.playlistDoesNotExist = true;
         }
+        // TODO: handle other errors
+        // restart another update in 10seconds
+        setTimeout(() => { this.updateInterface(); }, 10000);
       });
+  }
+
+  savePlayer(player) {
+    this.player = player;
+  }
+
+  updateCurrentVideo(video_id) {
+    // if the player isn't initialzed yet, just wait for the next update
+    if (!this.player) {
+      return;
+    }
+    // no need to update if the current id hasn't changed
+    if (this.video_id === video_id) {
+      return;
+    }
+    // update !
+    this.video_id = video_id;
+    this.player.loadVideoById(this.video_id);
+    this.player.playVideo();
   }
 }
