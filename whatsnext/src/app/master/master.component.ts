@@ -20,7 +20,7 @@ export class MasterComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
     @Inject(WINDOW) private window: Window
   ) { }
 
@@ -39,7 +39,9 @@ export class MasterComponent implements OnInit {
     future.subscribe(
       playlist => {
         if (playlist.current_song) {
-          updateCurrentVideo(playlist.current_song.id);
+          this.updateCurrentVideo(playlist.current_song.id);
+        } else {
+          this.requestNext();
         }
         // restart another update in 10seconds
         setTimeout(() => { this.updateInterface(); }, 10000);
@@ -52,6 +54,15 @@ export class MasterComponent implements OnInit {
         // restart another update in 10seconds
         setTimeout(() => { this.updateInterface(); }, 10000);
       });
+  }
+
+  requestNext() {
+    let future = this.http.post<Playlist>(
+      API_URL + "/playlist/" + this.id + "/next");
+    future.subscribe(
+      playlist => { this.updateInterface(); }
+      error => { this.updateInterface(); }
+    );
   }
 
   savePlayer(player) {
