@@ -111,14 +111,14 @@ def handle_method(method, event):
     if method == "POST":
         if event['resource'] == "/v1/playlist/{playlistID}/next":
             return playlist_to_next(event['pathParameters']['playlistID'])
+        elif event['resource'] == "/v1/playlist/{playlistID}/append":
+            return append_to_playlist(event['pathParameters']['playlistID'],
+                                      event['body'])
         return create_playlist()
     elif method == "GET":
         if event['pathParameters']:
             return get_playlist_details(event['pathParameters']['playlistID'])
         return list_playlists()
-    elif method == "PUT":
-        return append_to_playlist(event['pathParameters']['playlistID'],
-                                  event['body'])
     elif method == "DELETE":
         return delete_playlist(event['pathParameters']['playlistID'])
     return "UNKNOWN METHOD", 500

@@ -12,7 +12,7 @@ response.raise_for_status()
 playlist_id = response.json()['id']
 
 # add a song
-response = requests.put(
+response = requests.post(
     args.origin + "/v1/playlist/" + playlist_id + "/append",
     json={"source": "somesongsource"}
 )
