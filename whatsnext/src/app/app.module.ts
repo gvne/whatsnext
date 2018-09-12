@@ -4,11 +4,13 @@ import { HttpClientModule }    from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
+import { MasterComponent } from './master/master.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    IndexComponent
+    IndexComponent,
+    MasterComponent
   ],
   imports: [
     BrowserModule,
