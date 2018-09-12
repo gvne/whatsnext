@@ -10,6 +10,7 @@ export class MasterComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log("In master component");
   }
 
 }
