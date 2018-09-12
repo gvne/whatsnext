@@ -7,6 +7,8 @@ import { IndexComponent } from './index/index.component';
 import { MasterComponent } from './master/master.component';
 import { AppRoutingModule } from './/app-routing.module';
 
+import { WINDOW_PROVIDERS } from './window.provider';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,7 +20,9 @@ import { AppRoutingModule } from './/app-routing.module';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    WINDOW_PROVIDERS
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
