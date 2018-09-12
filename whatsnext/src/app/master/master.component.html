@@ -1,4 +1,10 @@
-<p>
-  You can distribute you client url: {{getClientURL()}}
+<!-- <p> -->
+  <div *ngIf="playlistDoesNotExist">
+    A playlist with the given ID couldn't be found.
+    Consider creating a new one
+  </div>
+  <div *ngIf="!playlistDoesNotExist">
+    You can distribute you client url: {{getClientURL()}}
+  </div>
 
-</p>
+<!-- </p> -->
