@@ -25,7 +25,6 @@ export class IndexComponent implements OnInit {
     let future = this.http.post<Playlist>(API_URL + "/playlist", null);
     future.subscribe(
       playlist => {
-        console.log("ici");
         this.router.navigateByUrl('/master/' + playlist.id);
       }
       error => {
