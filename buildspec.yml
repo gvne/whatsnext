@@ -1,0 +1,10 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - docker build -t whatsnext-app -f Dockerfile.app .
+      - docker run -v$(pwd):/home/node/app whatsnext-app ng build --base-href=/whatsnext-app/whatsnext/
+  artifacts:
+    files:
+      - '**/*'
+    base-directory: whatsnext/dist
