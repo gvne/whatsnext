@@ -9,8 +9,8 @@ phases:
       - docker build -t whatsnext-app -f Dockerfile.app .
   build:
     commands:
+      - docker run -v$(pwd):/home/node/app whatsnext-app npm install
       - docker run -v$(pwd):/home/node/app whatsnext-app ng build --base-href=/whatsnext-app/whatsnext/
-      # TODO: upload to the right s3 bucket
-  # post_build:
-  #   commands:
-  #     -
+      # Upload to s3
+      - aws s3 rm s3://whatsnext-app/whatsnext
+      - aws s3 cp --acl public-read --recursive whatsnext/dist/whatsnext/ s3://whatsnext-app/whatsnext
