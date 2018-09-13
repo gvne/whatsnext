@@ -1,13 +1,12 @@
-
-<div *ngIf="playlistDoesNotExist">
+<div *ngIf="!playlist_exists">
   A playlist with the given ID couldn't be found.
-  Consider creating a new one
+  Consider creating a new one.
 </div>
-<div *ngIf="!playlistDoesNotExist">
+
+<div *ngIf="playlist_exists">
   You can distribute you client url: {{getClientURL()}}
   <p>
   <youtube-player
-      [videoId]="current_video_id"
       (ready)="savePlayer($event)"
       (change)="onStateChange($event)"
     ></youtube-player>
