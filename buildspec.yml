@@ -2,6 +2,10 @@ version: 0.2
 phases:
   build:
     commands:
+      # wait for docker daemon to be up
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay&
+      - timeout -t 15 sh -c "until docker info; do echo .; sleep 1; done
+      # Then build the container and the application
       - docker build -t whatsnext-app -f Dockerfile.app .
       - docker run -v$(pwd):/home/node/app whatsnext-app ng build --base-href=/whatsnext-app/whatsnext/
       # TODO: upload to the right s3 bucket
