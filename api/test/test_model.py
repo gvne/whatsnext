@@ -94,3 +94,17 @@ class TestModel(unittest.TestCase):
         playlist.delete()
         with self.assertRaises(pywhatsnext.NotFoundException):
             pywhatsnext.Playlist.from_id(playlist.id)
+
+    def test_multiple_add_next(self):
+        playlist = pywhatsnext.Playlist()
+        playlist.save()
+
+        for i in range(10):
+            song = pywhatsnext.Song.from_body(
+                {"source": "source" + str(i), "id": "id" + str(i)}
+            )
+            playlist.append(song);
+            playlist.save()
+
+            playlist.next()
+            playlist.save()

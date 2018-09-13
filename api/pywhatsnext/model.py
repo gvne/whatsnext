@@ -95,6 +95,8 @@ class Playlist(Model):
 
         song_index = 0
         while song_index < len(self.songs) - 1:
+            print(song_index)
             if self.__current_song.id == self.__song_at_index(song_index).id:
                 self.current_song = self.songs[song_index + 1]
                 return
+            song_index += 1
