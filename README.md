@@ -48,3 +48,8 @@ To start a development server on port 4200
 ```bash
 docker run -v$(pwd):/home/node/app -p4200:4200 whatsnext-app
 ```
+
+To build
+```bash
+docker run -it --rm -v$(pwd):/home/node/app ng build
+```
