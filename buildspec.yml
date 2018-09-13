@@ -6,6 +6,7 @@ phases:
       - timeout -t 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
+      - pip install awscli --upgrade --user
       - docker build -t whatsnext-app -f Dockerfile.app .
   build:
     commands:
