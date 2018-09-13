@@ -1,2 +1,11 @@
 <p>{{error_message}}</p>
-<button (click)="createLobby()">Create a lobby !</button>
+<div>
+  <p>What to create a lobby ?</p>
+  <button (click)="createLobby()">Create a lobby !</button>
+</div>
+
+<div>
+  <p>Or maybe to join a lobby !</p>
+  <input #lobbyID placeholder="lobby ID"/>
+  <button (click)="joinLobby(lobbyID.value)">Join !</button>
+</div>

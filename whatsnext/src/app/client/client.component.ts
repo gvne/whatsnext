@@ -35,7 +35,7 @@ export class ClientComponent implements OnInit {
       playlist => {
         this.success_message = "Successfuly appended !";
         setTimeout(() => { this.success_message = null; }, 5000);
-      }
+      },
       error => {
         this.error_message = "Something went wrong...";
         setTimeout(() => { this.error_message = null; }, 5000);

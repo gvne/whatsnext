@@ -31,10 +31,6 @@ export class MasterComponent implements OnInit {
     this.updateInterface();
   }
 
-  getClientURL() : string {
-    return this.window.location.hostname + "/client/" + this.id;
-  }
-
   updateInterface() {
     console.log("Updating !");
     let future = this.http.get<Playlist>(API_URL + "/playlist/" + this.id);
@@ -58,13 +54,13 @@ export class MasterComponent implements OnInit {
             this.requestNext();
           }
         }
-      }
+      },
       error => {
         if (error.status == 404) {
           this.playlist_exists = false;
         }
         // TODO: handle other errors
-      }
+      },
       () => {
         // even if we get an error, we will retry in 10 seconds
         setTimeout(() => { this.updateInterface(); }, 10000);
@@ -75,7 +71,7 @@ export class MasterComponent implements OnInit {
   requestNext() {
     // post to the next enpoint and set the current video from obtained result
     let future = this.http.post<Playlist>(
-      API_URL + "/playlist/" + this.id + "/next");
+      API_URL + "/playlist/" + this.id + "/next", null);
     future.subscribe(
       playlist => {
         this.setCurrentVideo(playlist.current_song.youtube_id);

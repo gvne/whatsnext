@@ -26,12 +26,16 @@ export class IndexComponent implements OnInit {
     future.subscribe(
       playlist => {
         this.router.navigateByUrl('/master/' + playlist.id);
-      }
+      },
       error => {
         this.error_message = "Couldn't create a new lobby. Please try again later";
         setTimeout(() => { this.error_message = null; }, 5000);
       }
     );
+  }
+
+  private joinLobby(lobby_id) {
+    this.router.navigateByUrl('/client/' + lobby_id);
   }
 
 }
