@@ -1,6 +1,6 @@
 export interface Song {
   id: string;
-  source: string;
+  youtube_id: string;
 }
 
 export interface Playlist {

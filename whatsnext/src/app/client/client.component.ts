@@ -26,10 +26,9 @@ export class ClientComponent implements OnInit {
   }
 
   appendVideo(video_id) {
-    const song: Song = {id: video_id, source: "youtube"};
     let future = this.http.post<Playlist>(
       API_URL + "/playlist/" + this.id + "/append",
-      JSON.stringify(song)
+      '{"youtube_id": "' + video_id + '"}'
     );
 
     future.subscribe(

@@ -43,9 +43,9 @@ export class MasterComponent implements OnInit {
         this.playlist_exists = true;
         // We obtained a playlist.
         if (playlist.current_song) {
-          if (this.video_id !== playlist.current_song.id) {
+          if (this.video_id !== playlist.current_song.youtube_id) {
             // Update the current song to the one obtained from the API if any
-            this.setCurrentVideo(playlist.current_song.id);
+            this.setCurrentVideo(playlist.current_song.youtube_id);
           } else if (this.player.getPlayerState() === YT.PlayerState.ENDED) {
             // If current video is still the same and player has ended,
             // try to move to next song
@@ -78,7 +78,7 @@ export class MasterComponent implements OnInit {
       API_URL + "/playlist/" + this.id + "/next");
     future.subscribe(
       playlist => {
-        this.setCurrentVideo(playlist.current_song.id);
+        this.setCurrentVideo(playlist.current_song.youtube_id);
       }
     );
   }
