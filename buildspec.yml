@@ -6,7 +6,13 @@ phases:
       - timeout -t 15 sh -c "until docker info; do echo .; sleep 1; done"
   pre_build:
     commands:
-      - pip install awscli --upgrade --user
+      # install aws cli see https://github.com/anigeo/docker-awscli/blob/master/Dockerfile
+      - mkdir -p /aws
+      - apk -Uuv add groff less python py-pip
+      - pip install awscli
+      - apk --purge -v del py-pip
+      - rm /var/cache/apk/*
+      # build the docker image
       - docker build -t whatsnext-app -f Dockerfile.app .
   build:
     commands:
