@@ -5,15 +5,15 @@ import pywhatsnext
 class TestModel(unittest.TestCase):
     def test_song(self):
         song_id = 12
-        song_source = "https://www.youtube.com/watch?v=wTqEB0MyGdY"
+        youtube_id = "wTqEB0MyGdY"
         original_body = {
             "id": 12,
-            "source": song_source
+            "youtube_id": youtube_id
         }
         song = pywhatsnext.Song()
         song.init_from_body(original_body)
         self.assertNotEqual(song.id, None)
-        self.assertEqual(song.source, song_source)
+        self.assertEqual(song.youtube_id, youtube_id)
         self.assertEqual(song.to_dict(), original_body)
 
     def test_invalid_song_raises(self):
@@ -22,7 +22,7 @@ class TestModel(unittest.TestCase):
             song.init_from_body(
                 {
                     "id": 12,
-                    "source": "https://www.youtube.com/watch?v=wTqEB0MyGdY",
+                    "youtube_id": "wTqEB0MyGdY",
                     "invalid_field": "somevalue"
                 }
             )
@@ -33,7 +33,7 @@ class TestModel(unittest.TestCase):
             "owner": "someuser",
             "current_song": "asongid",
             "songs": [
-                {"id": "asongid", "source": "asongsource"}
+                {"id": "asongid", "youtube_id": "asongsource"}
             ]
         }
         playlist = pywhatsnext.Playlist()
@@ -45,7 +45,7 @@ class TestModel(unittest.TestCase):
             "id": "123",
             "owner": "someuser",
             "songs": [
-                {"id": "asongid", "source": "asongsource"}
+                {"id": "asongid", "youtube_id": "asongsource"}
             ]
         }
         playlist = pywhatsnext.Playlist()
@@ -57,7 +57,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(playlist.current_song['id'], "asongid")
         playlist.append(
             pywhatsnext.Song.from_body(
-                {"id": "anothersongid", "source": "nothing"}
+                {"id": "anothersongid", "youtube_id": "nothing"}
             )
         )
         self.assertEqual(playlist.current_song['id'], "asongid")
@@ -78,7 +78,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(playlist.to_dict(), another_playlist.to_dict())
 
         # update the song needs to get a save to be sent to database
-        song_body = { "source": "a song source" }
+        song_body = { "youtube_id": "a song source" }
         playlist.append(pywhatsnext.Song.from_body(song_body))
         self.assertNotEqual(
             playlist.to_dict(),
@@ -101,7 +101,7 @@ class TestModel(unittest.TestCase):
 
         for i in range(10):
             song = pywhatsnext.Song.from_body(
-                {"source": "source" + str(i), "id": "id" + str(i)}
+                {"youtube_id": "source" + str(i), "id": "id" + str(i)}
             )
             playlist.append(song);
             playlist.save()

@@ -11,10 +11,17 @@ response = requests.post(args.origin + "/v1/playlist")
 response.raise_for_status()
 playlist_id = response.json()['id']
 
+# We shouldn't be able to add a song with an id. The id is automatically created
+response = requests.post(
+    args.origin + "/v1/playlist/" + playlist_id + "/append",
+    json={"youtube_id": "somesongsource", "id": "someid"}
+)
+assert response.status_code != 200
+
 # add a song
 response = requests.post(
     args.origin + "/v1/playlist/" + playlist_id + "/append",
-    json={"source": "somesongsource"}
+    json={"youtube_id": "somesongsource"}
 )
 response.raise_for_status()
 

@@ -75,7 +75,11 @@ def append_to_playlist(playlist_id, body):
     """
     try:
         playlist = pywhatsnext.Playlist.from_id(playlist_id)
-        song = pywhatsnext.Song.from_body(json.loads(body))
+        json_body = json.loads(body)
+        # The ID field should be automatically created
+        if "id" in json_body.keys():
+            raise InvalidBody("The added song shouldn't contain an 'id' field")
+        song = pywhatsnext.Song.from_body(json_body)
         playlist.append(song)
         playlist.save()
         return playlist.to_dict(), 200
