@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../constants';
 import { Playlist, Song } from '../objects';
@@ -10,8 +11,10 @@ import { Playlist, Song } from '../objects';
 })
 
 export class IndexComponent implements OnInit {
+  private error_message: string;
 
   constructor(
+    private router: Router,
     private http: HttpClient
   ) {}
 
@@ -19,9 +22,17 @@ export class IndexComponent implements OnInit {
   }
 
   private createLobby() {
-    this.http.post<Playlist>(API_URL + "/playlist", null).subscribe(playlist => {
-      console.log(playlist);
-    });
+    let future = this.http.post<Playlist>(API_URL + "/playlist", null);
+    future.subscribe(
+      playlist => {
+        console.log("ici");
+        this.router.navigateByUrl('/master/' + playlist.id);
+      }
+      error => {
+        this.error_message = "Couldn't create a new lobby. Please try again later";
+        setTimeout(() => { this.error_message = null; }, 5000);
+      }
+    );
   }
 
 }

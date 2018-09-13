@@ -13,7 +13,8 @@ import { Playlist, Song } from '../objects';
 export class ClientComponent implements OnInit {
   private id: string;
   private video_id: string;
-  private error: string;
+  private error_message: string;
+  private success_message: string;
 
   constructor(
     private route: ActivatedRoute,
