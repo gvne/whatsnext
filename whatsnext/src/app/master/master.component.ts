@@ -1,11 +1,6 @@
-import { Component, OnInit, Injectable, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, Input } from '@angular/core';
 
-import { WINDOW } from '../window.provider';
-import { API_URL } from '../constants';
-import { Playlist, Song } from '../objects';
-
+import { LobbyService } from '../lobby.service';
 
 @Component({
   selector: 'app-master',
@@ -13,90 +8,80 @@ import { Playlist, Song } from '../objects';
   styleUrls: ['./master.component.css']
 })
 export class MasterComponent implements OnInit {
+  @Input() lobbyId: string;
+
+  private videoId: string;
+  private playlistExists: boolean = true;
   player: YT.Player;
-  private id: string;
-  private video_id: string;
-  private playlist_exists: boolean;
 
   constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    @Inject(WINDOW) private window: Window
+    private lobbyService: LobbyService
   ) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    this.playlist_exists = true;
     // every 5 seconds we query the API to update the interface
     this.updateInterface();
   }
 
   updateInterface() {
-    console.log("Updating !");
-    let future = this.http.get<Playlist>(API_URL + "/playlist/" + this.id);
+    console.log("updating the interface !");
+    let future = this.lobbyService.getCurrentVideo(this.lobbyId);
     future.subscribe(
-      playlist => {
-        this.playlist_exists = true;
-        // We obtained a playlist.
-        if (playlist.current_song) {
-          if (this.video_id !== playlist.current_song.youtube_id) {
-            // Update the current song to the one obtained from the API if any
-            this.setCurrentVideo(playlist.current_song.youtube_id);
-          } else if (this.player.getPlayerState() === YT.PlayerState.ENDED) {
-            // If current video is still the same and player has ended,
-            // try to move to next song
-            this.requestNext();
-          }
-        } else {
-          // move to next song if we don't have any current song and the songs
-          // list isn't empty
-          if (playlist.songs && playlist.songs.length !== 0) {
-            this.requestNext();
-          }
-        }
+      song => {
+        this.setCurrentSong(song);
+        this.scheduleNextUpdate();
       },
       error => {
-        if (error.status == 404) {
-          this.playlist_exists = false;
-        }
-        // TODO: handle other errors
-      },
-      () => {
-        // even if we get an error, we will retry in 10 seconds
-        setTimeout(() => { this.updateInterface(); }, 10000);
+        this.requestNext();
+        this.scheduleNextUpdate();
       }
     );
   }
 
+  scheduleNextUpdate() {
+    setTimeout(() => { this.updateInterface(); }, 10000);
+  }
+
+  setCurrentSong(song) {
+    if (this.videoId !== song.youtube_id) {
+      // if the current video changed, update it
+      this.startVideo(song.youtube_id);
+    } else if (this.player.getPlayerState() === YT.PlayerState.ENDED) {
+      // If current video is still the same but the player has ended, we are in
+      // the case of the end of a song. We will ask for another one until one
+      // is available.
+      this.requestNext();
+    }
+  }
+
   requestNext() {
     // post to the next enpoint and set the current video from obtained result
-    let future = this.http.post<Playlist>(
-      API_URL + "/playlist/" + this.id + "/next", null);
-    future.subscribe(
-      playlist => {
-        this.setCurrentVideo(playlist.current_song.youtube_id);
-      }
+    this.lobbyService.moveToNext(this.lobbyId).subscribe(
+      song => {},
+      error => {}
     );
   }
 
   // -------------------------------
   // YoutubePlayer functions
   // -------------------------------
-  setCurrentVideo(video_id) {
-    // no need to update if the current id hasn't changed
-    if (this.video_id === video_id) {
+  startVideo(videoId) {
+    if (this.videoId === videoId) {
+      // no need to update if the current id hasn't changed
       return;
     }
-    // if the player isn't initialzed yet
+
     if (!this.player) {
+      // if the player isn't initialzed yet
       console.log("Player isn't properly initialized. Waiting 1 second")
       // retry in one second !
-      setTimeout(() => { this.setCurrentVideo(video_id); }, 1000);
+      setTimeout(() => { this.startVideo(videoId); }, 1000);
       return;
     }
+
     // update !
-    this.video_id = video_id;
-    this.player.loadVideoById(this.video_id);
+    this.videoId = videoId;
+    this.player.loadVideoById(this.videoId);
     this.player.playVideo();
   }
 

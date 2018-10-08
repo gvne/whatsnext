@@ -1,9 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit, Input } from '@angular/core';
 
-import { API_URL } from '../constants';
-import { Playlist, Song } from '../objects';
+import { LobbyService } from '../lobby.service';
 
 @Component({
   selector: 'app-client',
@@ -11,34 +8,28 @@ import { Playlist, Song } from '../objects';
   styleUrls: ['./client.component.css']
 })
 export class ClientComponent implements OnInit {
-  private id: string;
-  private video_id: string;
-  private error_message: string;
-  private success_message: string;
+  @Input() lobbyId: string = null;
+
+  private successMessage: string;
+  private errorMessage: string;
 
   constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient
+    private lobbyService: LobbyService
   ) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
   }
 
-  appendVideo(video_id) {
-    let future = this.http.post<Playlist>(
-      API_URL + "/playlist/" + this.id + "/append",
-      '{"youtube_id": "' + video_id + '"}'
-    );
-
+  appendVideo(videoId) {
+    let future = this.lobbyService.appendVideoById(this.lobbyId, videoId);
     future.subscribe(
       playlist => {
-        this.success_message = "Successfuly appended !";
-        setTimeout(() => { this.success_message = null; }, 5000);
+        this.successMessage = "Successfuly appended !";
+        setTimeout(() => { this.successMessage = null; }, 5000);
       },
       error => {
-        this.error_message = "Something went wrong...";
-        setTimeout(() => { this.error_message = null; }, 5000);
+        this.errorMessage = "Something went wrong...";
+        setTimeout(() => { this.errorMessage = null; }, 5000);
       }
     );
   }

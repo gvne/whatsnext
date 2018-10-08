@@ -1,10 +1,10 @@
-<div *ngIf="!playlist_exists">
+<!-- <div *ngIf="!playlist_exists">
   A playlist with the given ID couldn't be found.
   Consider creating a new one.
-</div>
+</div> -->
 
-<div *ngIf="playlist_exists">
-  Invite people to join your lobby with ID: {{id}}
+<div *ngIf="playlistExists">
+  Invite people to join your lobby with ID: {{lobbyId}}
   <p>
   <youtube-player
       (ready)="savePlayer($event)"

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { API_URL } from '../constants';
-import { Playlist, Song } from '../objects';
+
+import { LobbyService } from '../lobby.service';
 
 @Component({
   selector: 'app-index',
@@ -11,31 +9,27 @@ import { Playlist, Song } from '../objects';
 })
 
 export class IndexComponent implements OnInit {
-  private error_message: string;
+  // private createdLobbyId: string = null;
+  private createdLobbyId: string = null;
+  private joinedLobbyId: string = null;
 
   constructor(
-    private router: Router,
-    private http: HttpClient
+    private lobbyService: LobbyService,
   ) {}
 
   ngOnInit() {
   }
 
   private createLobby() {
-    let future = this.http.post<Playlist>(API_URL + "/playlist", null);
+    let future = this.lobbyService.createLobby();
     future.subscribe(
-      playlist => {
-        this.router.navigateByUrl('/master/' + playlist.id);
-      },
-      error => {
-        this.error_message = "Couldn't create a new lobby. Please try again later";
-        setTimeout(() => { this.error_message = null; }, 5000);
-      }
+      playlist => { this.createdLobbyId = playlist.id; },
+      error => { }
     );
   }
 
-  private joinLobby(lobby_id) {
-    this.router.navigateByUrl('/client/' + lobby_id);
+  private joinLobby(lobbyId) {
+    this.joinedLobbyId = lobbyId;
   }
 
 }
