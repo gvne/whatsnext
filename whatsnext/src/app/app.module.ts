@@ -14,11 +14,13 @@ import { YoutubePlayerModule } from 'ngx-youtube-player';
 import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
 import { MasterComponent } from './master/master.component';
+import { ClientComponent } from './client/client.component';
 import { SearchbarComponent } from './searchbar/searchbar.component';
-import { AppRoutingModule } from './/app-routing.module';
+
+import { AppRoutingModule } from './app-routing.module';
 
 import { WINDOW_PROVIDERS } from './window.provider';
-import { ClientComponent } from './client/client.component';
+import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-video-detail.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { ClientComponent } from './client/client.component';
     MasterComponent,
     ClientComponent,
     SearchbarComponent,
+    YoutubeVideoDetailComponent,
   ],
   imports: [
     BrowserModule,

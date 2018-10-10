@@ -1,7 +1,14 @@
 <p>{{successMessage}}</p>
 <p>{{errorMessage}}</p>
 
-<app-searchbar></app-searchbar>
-<!--
-<input #videoInput placeholder="video id"/>
-<button (click)="appendVideo(videoInput.value)">Append !</button> -->
+<app-searchbar
+  (search)="onSearch($event)">
+</app-searchbar>
+
+<div>
+    <app-youtube-video-detail
+      *ngFor="let element of searchResult"
+      [video]="element"
+      (selected)="appendVideo($event)">
+    </app-youtube-video-detail>
+</div>

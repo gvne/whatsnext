@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { LobbyService } from '../lobby.service';
+import { SearchService } from '../search.service';
 
 @Component({
   selector: 'app-client',
@@ -12,9 +13,11 @@ export class ClientComponent implements OnInit {
 
   private successMessage: string;
   private errorMessage: string;
+  private searchResult: Array<Object>;
 
   constructor(
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
+    private searchService: SearchService
   ) { }
 
   ngOnInit() {
@@ -31,6 +34,12 @@ export class ClientComponent implements OnInit {
         this.errorMessage = "Something went wrong...";
         setTimeout(() => { this.errorMessage = null; }, 5000);
       }
+    );
+  }
+
+  onSearch(query) {
+    this.searchService.searchYoutube((query)).subscribe(
+      results => { this.searchResult = results; }
     );
   }
 }
