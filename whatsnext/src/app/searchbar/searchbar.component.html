@@ -1,0 +1,15 @@
+<form (ngSubmit)="validateSearch()">
+  <mat-form-field>
+    <input
+      type="text"
+      placeholder="search"
+      matInput
+      [matAutocomplete]="auto"
+      [formControl]="searchControl">
+  </mat-form-field>
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let suggestion of completionSuggestions" [value]="suggestion">
+      {{ suggestion }}
+    </mat-option>
+  </mat-autocomplete>
+</form>
