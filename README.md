@@ -34,6 +34,12 @@ python -m unittest discover
 ## Application
 
 The application is based on Angular.  
+
+First, configure the application using the right API keys:
+```bash
+bash whatsnext/configure.sh --yt-key [Your YOUTUBE DATA API KEY]
+```
+
 To ease the development, we give access to a docker container. To build it:
 ```bash
 docker build -t whatsnext-app -f Dockerfile.app .

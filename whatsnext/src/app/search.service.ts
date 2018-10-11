@@ -11,8 +11,11 @@ import { map } from 'rxjs/operators';
 import {
   SEARCH_AUTOCOMPLETE_API_URL,
   YOUTUBE_API_SEARCH_ENDPOINT,
-  YOUTUBE_API_KEY
 } from './constants';
+
+import {
+  YOUTUBE_API_KEY
+} from './keys';
 
 @Injectable({
   providedIn: 'root'

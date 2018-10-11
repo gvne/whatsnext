@@ -5,4 +5,3 @@ export const SEARCH_AUTOCOMPLETE_API_URL = "https://suggestqueries.google.com/co
 
 // Youtube Data API
 export const YOUTUBE_API_SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search"
-export const YOUTUBE_API_KEY = "AIzaSyCj2OsiC0wBxjD3gRdYaXr81ip_RlTM6A4";
