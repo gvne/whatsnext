@@ -5,3 +5,8 @@ export const SEARCH_AUTOCOMPLETE_API_URL = "https://suggestqueries.google.com/co
 
 // Youtube Data API
 export const YOUTUBE_API_SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search"
+
+export const authConfig = {
+  loginEndpoint: "https://whatnext.auth.us-east-1.amazoncognito.com/login",
+  tokenEndpoint: "https://whatnext.auth.us-east-1.amazoncognito.com/oauth2/token",
+};

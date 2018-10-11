@@ -18,6 +18,8 @@ phases:
     commands:
       # configure the project
       - echo "export const YOUTUBE_API_KEY = \"$YOUTUBE_DATA_API_KEY\"" > whatsnext/src/app/keys.ts;
+      - echo "export const AUTH_CLIENT_ID = \"$AUTH_CLIENT_ID\";" >> $key_file_path
+      - echo "export const AUTH_CLIENT_SECRET = \"$AUTH_CLIENT_SECRET\";" >> $key_file_path
       # build it
       - docker run -v$(pwd):/home/node/app whatsnext-app npm install
       - docker run -v$(pwd):/home/node/app whatsnext-app ng build --base-href=/whatsnext-app/whatsnext/
