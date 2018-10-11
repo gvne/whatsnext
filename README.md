@@ -37,7 +37,7 @@ The application is based on Angular.
 
 First, configure the application using the right API keys:
 ```bash
-bash whatsnext/configure.sh --yt-key [Your YOUTUBE DATA API KEY]
+bash whatsnext/configure.sh --yt-key [Your YOUTUBE DATA API KEY] --auth [Your Cognito App client Id] --auth-secret [Your Cognito App secret]
 ```
 
 To ease the development, we give access to a docker container. To build it:
