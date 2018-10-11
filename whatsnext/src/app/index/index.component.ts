@@ -18,6 +18,9 @@ export class IndexComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (localStorage.getItem('joinedLobbyId')) {
+      this.joinLobby(localStorage.getItem('joinedLobbyId'));
+    }
   }
 
   private createLobby() {
@@ -29,6 +32,7 @@ export class IndexComponent implements OnInit {
   }
 
   private joinLobby(lobbyId) {
+    localStorage.setItem('joinedLobbyId', lobbyId);
     this.joinedLobbyId = lobbyId;
   }
 

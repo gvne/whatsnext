@@ -17,6 +17,9 @@ phases:
   build:
     commands:
       # configure the project
+      - ls .
+      - ls whatsnext
+      - chmod -x whatsnext/configure.sh
       - ./whatsnext/configure.sh --yt $YOUTUBE_DATA_API_KEY
       # build it
       - docker run -v$(pwd):/home/node/app whatsnext-app npm install
