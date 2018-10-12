@@ -24,15 +24,12 @@ export interface OAuthToken {
 })
 export class AuthService {
   private token: OAuthToken = null;
-  private queryParams: Observable<Params>;
 
   constructor(
     private http: HttpClient,
     private router: Router,
     @Inject(DOCUMENT) private document: any
-  ) {
-    this.setupQueryTokenListener();
-  }
+  ) {}
 
   getOAuthToken(): Observable<OAuthToken> {
     // try to read the token from localStorage
@@ -46,7 +43,7 @@ export class AuthService {
     }
 
     // initialize an Observable<Observable<OAuthToken>>
-    let future = this.queryParams.pipe(
+    let future = this.getQueryToken().pipe(
       map (
         queryParams => {
           if (!('code' in queryParams)) {
@@ -79,8 +76,8 @@ export class AuthService {
     this.token = token;
   }
 
-  private setupQueryTokenListener() {
-    this.queryParams = new Observable((observer) => {
+  private getQueryToken(): Observable<Params> {
+    return new Observable((observer) => {
       // queryParams always fires twice.
       // see https://github.com/angular/angular/issues/13804
       this.router.events.subscribe(
