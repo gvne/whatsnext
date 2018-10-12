@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, DefaultUrlSerializer, Params } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { map } from 'rxjs/operators';
@@ -24,47 +24,97 @@ export interface OAuthToken {
 })
 export class AuthService {
   private token: OAuthToken = null;
+  private queryParams: Observable<Params>;
 
   constructor(
     private http: HttpClient,
     private router: Router,
     @Inject(DOCUMENT) private document: any
   ) {
-    let tokenJSON = localStorage.getItem("auth_token");
-    if (tokenJSON) {
-      this.token = JSON.parse(tokenJSON);
-    }
+    this.setupQueryTokenListener();
   }
 
-  getRedirectURI() {
+  getOAuthToken(): Observable<OAuthToken> {
+    // try to read the token from localStorage
+    let tokenJSON = localStorage.getItem("auth_token");
+    if (tokenJSON) {
+      return new Observable((observer) => {
+        observer.next(JSON.parse(tokenJSON));
+        observer.complete();
+        return () => {};
+      });
+    }
+
+    // initialize an Observable<Observable<OAuthToken>>
+    let future = this.queryParams.pipe(
+      map (
+        queryParams => {
+          if (!('code' in queryParams)) {
+            this.redirectToLoginPage();
+          }
+          return this.getOAuthTokenFromCode(queryParams['code']);
+        }
+      )
+    );
+
+    // make an Observable<OAuthToken> from Observable<Observable<OAuthToken>>
+    return new Observable((observer) => {
+      future.subscribe(
+        result => {
+          result.subscribe(
+            token => {
+              this.setOAuthToken(token);
+              observer.next(token);
+              observer.complete();
+            }
+          );
+        }
+      );
+      return () => {};
+    });
+  }
+
+  private setOAuthToken(token) {
+    localStorage.setItem("auth_token", JSON.stringify(token));
+    this.token = token;
+  }
+
+  private setupQueryTokenListener() {
+    this.queryParams = new Observable((observer) => {
+      // queryParams always fires twice.
+      // see https://github.com/angular/angular/issues/13804
+      this.router.events.subscribe(
+        event => {
+          // Only run once through this. Any other event can be forgotten
+          if (!(event instanceof NavigationStart)) {
+            return;
+          }
+
+          // parse the event URL
+          let serializer = new DefaultUrlSerializer();
+          let tree = serializer.parse(event.url);
+          let queryParams = tree.queryParams;
+
+          observer.next(queryParams);
+          observer.complete();
+        }
+      );
+      return () => {};
+    });
+  }
+
+  private getRedirectURI() {
     return location.protocol + '//' + location.host + location.pathname;
   }
 
-  redirectToLoginPage() {
+  private redirectToLoginPage() {
     this.document.location.href = authConfig.loginEndpoint +
                                   "?client_id=" + AUTH_CLIENT_ID +
                                   "&response_type=code" +
                                   "&redirect_uri=" + this.getRedirectURI()
   }
 
-  getToken() : OAuthToken {
-    return this.token;
-  }
-
-  isLoggedIn(): boolean {
-    return this.token !== null;
-  }
-
-  // getUserID() : string {
-  //   try{
-  //     return jwt_decode(this.token.access_token).sub;
-  //   }
-  //   catch(Error){
-  //     return null;
-  //   }
-  // }
-
-  initializeOAuthToken(code): Observable<void> {
+  private getOAuthTokenFromCode(code): Observable<OAuthToken> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': "Basic " + btoa(AUTH_CLIENT_ID + ":" + AUTH_CLIENT_SECRET),
@@ -72,22 +122,13 @@ export class AuthService {
       })
     };
 
-    let future = this.http.post<OAuthToken>(
+    return this.http.post<OAuthToken>(
       authConfig.tokenEndpoint,
       "grant_type=authorization_code" +
       "&code=" + code +
       "&redirect_uri=" + this.getRedirectURI() +
       "&client_id=" + AUTH_CLIENT_ID,
       httpOptions
-    );
-
-    return future.pipe(
-      map(
-        (token: OAuthToken) => {
-          this.token = token;
-          localStorage.setItem("auth_token", JSON.stringify(token));
-        }
-      )
     );
   }
 }
