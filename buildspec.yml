@@ -22,7 +22,7 @@ phases:
       - echo "export const AUTH_CLIENT_SECRET = \"$AUTH_CLIENT_SECRET\";" >> whatsnext/src/app/keys.ts
       # build it
       - docker run -v$(pwd):/home/node/app whatsnext-app npm install
-      - docker run -v$(pwd):/home/node/app whatsnext-app ng build --base-href=/whatsnext-app/whatsnext/
+      - docker run -v$(pwd):/home/node/app whatsnext-app ng build
       # Upload to s3
-      - aws s3 rm s3://whatsnext-app/whatsnext
-      - aws s3 cp --acl public-read --recursive whatsnext/dist/whatsnext/ s3://whatsnext-app/whatsnext
+      - aws s3 rm s3://whatsnext-app --recursive
+      - aws s3 cp --acl public-read --recursive whatsnext/dist/whatsnext/ s3://whatsnext-app
