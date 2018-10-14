@@ -18,7 +18,6 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { YoutubePlayerModule } from 'ngx-youtube-player';
 
 import { AppComponent } from './app.component';
-import { IndexComponent } from './index/index.component';
 import { MasterComponent } from './master/master.component';
 import { ClientComponent } from './client/client.component';
 import { SearchbarComponent } from './searchbar/searchbar.component';
@@ -31,7 +30,6 @@ import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-vide
 @NgModule({
   declarations: [
     AppComponent,
-    IndexComponent,
     MasterComponent,
     ClientComponent,
     SearchbarComponent,
