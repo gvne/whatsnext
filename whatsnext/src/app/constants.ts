@@ -10,3 +10,10 @@ export const authConfig = {
   loginEndpoint: "https://whatnext.auth.us-east-1.amazoncognito.com/login",
   tokenEndpoint: "https://whatnext.auth.us-east-1.amazoncognito.com/oauth2/token",
 };
+
+// storage keys
+export const storageKeys = {
+  masterLobbyId: "masterLobbyId",
+  clientLobbyId: "clientLobbyId",
+  authToken: "authToken"
+};

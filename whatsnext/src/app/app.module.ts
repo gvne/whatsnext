@@ -6,8 +6,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatSnackBarModule,
+  MAT_SNACK_BAR_DEFAULT_OPTIONS
+} from '@angular/material/snack-bar';
 import { ReactiveFormsModule } from '@angular/forms'
 import { FormsModule } from '@angular/forms';
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 import { YoutubePlayerModule } from 'ngx-youtube-player';
 
@@ -40,12 +46,16 @@ import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-vide
     MatFormFieldModule,
     MatAutocompleteModule,
     MatInputModule,
+    MatButtonModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,
+    FlexLayoutModule,
   ],
   providers: [
-    WINDOW_PROVIDERS
+    WINDOW_PROVIDERS,
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 3000}}
   ],
   bootstrap: [AppComponent]
 })

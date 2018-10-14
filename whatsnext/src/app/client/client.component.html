@@ -1,14 +1,28 @@
-<p>{{successMessage}}</p>
-<p>{{errorMessage}}</p>
+<div fxLayout="column">
+  <form (ngSubmit)="joinLobby()">
+      <mat-form-field>
+        <div fxLayout="row">
+          <input type="text"
+                 placeholder="Lobby ID"
+                 matInput
+                 [formControl]="lobbyIdForm">
+          <button mat-flat-button>Join !</button>
+        </div>
+      </mat-form-field>
+  </form>
 
-<app-searchbar
-  (search)="onSearch($event)">
-</app-searchbar>
+  <div *ngIf="lobbyId">
+    <app-searchbar
+      (search)="onSearch($event)">
+    </app-searchbar>
 
-<div>
-    <app-youtube-video-detail
-      *ngFor="let element of searchResult"
-      [video]="element"
-      (selected)="appendVideo($event)">
-    </app-youtube-video-detail>
+    <div>
+        <app-youtube-video-detail
+          *ngFor="let element of searchResult"
+          [video]="element"
+          (selected)="appendVideo($event)">
+        </app-youtube-video-detail>
+    </div>
+  </div>
+
 </div>

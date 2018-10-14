@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { LobbyService } from '../lobby.service';
+import { storageKeys } from '../constants';
 
 @Component({
   selector: 'app-master',
@@ -8,10 +9,8 @@ import { LobbyService } from '../lobby.service';
   styleUrls: ['./master.component.css']
 })
 export class MasterComponent implements OnInit {
-  @Input() lobbyId: string;
-
+  private lobbyId: string = null;
   private videoId: string;
-  private playlistExists: boolean = true;
   player: YT.Player;
 
   constructor(
@@ -19,11 +18,32 @@ export class MasterComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // every 5 seconds we query the API to update the interface
+    let previousLobbyId = localStorage.getItem(storageKeys.masterLobbyId);
+    if (previousLobbyId) {
+      this.setLobbyId(previousLobbyId);
+    }
+  }
+
+  newLobby() {
+    let future = this.lobbyService.createLobby();
+    future.subscribe(
+      playlist => { this.setLobbyId(playlist.id); },
+      error => { }
+    );
+  }
+
+  setLobbyId(lobbyId) {
+    localStorage.setItem(storageKeys.masterLobbyId, lobbyId);
+    this.lobbyId = lobbyId;
     this.updateInterface();
   }
 
   updateInterface() {
+    // don't update if the lobbyId isn't set
+    if (!this.lobbyId) {
+      return;
+    }
+
     console.log("updating the interface !");
     let future = this.lobbyService.getCurrentVideo(this.lobbyId);
     future.subscribe(
@@ -39,7 +59,7 @@ export class MasterComponent implements OnInit {
   }
 
   scheduleNextUpdate() {
-    setTimeout(() => { this.updateInterface(); }, 10000);
+    setTimeout(() => { this.updateInterface(); }, 5000);
   }
 
   setCurrentSong(song) {

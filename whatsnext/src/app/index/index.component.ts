@@ -32,6 +32,7 @@ export class IndexComponent implements OnInit {
   }
 
   private joinLobby(lobbyId) {
+    console.log(lobbyId);
     localStorage.setItem('joinedLobbyId', lobbyId);
     this.joinedLobbyId = lobbyId;
   }

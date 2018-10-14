@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 // import * as jwt_decode from "jwt-decode";
 
-import { authConfig } from './constants';
+import { authConfig, storageKeys } from './constants';
 import { AUTH_CLIENT_ID, AUTH_CLIENT_SECRET } from './keys';
 
 export interface OAuthToken {
@@ -33,7 +33,7 @@ export class AuthService {
 
   getOAuthToken(): Observable<OAuthToken> {
     // try to read the token from localStorage
-    let tokenJSON = localStorage.getItem("auth_token");
+    let tokenJSON = localStorage.getItem(storageKeys.authToken);
     if (tokenJSON) {
       return new Observable((observer) => {
         observer.next(JSON.parse(tokenJSON));
@@ -72,7 +72,7 @@ export class AuthService {
   }
 
   private setOAuthToken(token) {
-    localStorage.setItem("auth_token", JSON.stringify(token));
+    localStorage.setItem(storageKeys.authToken, JSON.stringify(token));
     this.token = token;
   }
 
