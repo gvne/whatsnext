@@ -59,6 +59,12 @@ class Playlist(Model):
         playlist.init_from_body(response["Item"])
         return playlist
 
+    def init_from_body(self, body):
+        super(Playlist, self).init_from_body(body)
+        # make sure we set the current song even if initialized to None
+        if self.current_song == None:
+            self.next()
+
     def save(self):
         """
         write to the database
@@ -75,6 +81,8 @@ class Playlist(Model):
 
     def append(self, song):
         self.songs.append(song.to_dict())
+        if self.current_song == None:
+            self.next()
 
     @property
     def __current_song(self):

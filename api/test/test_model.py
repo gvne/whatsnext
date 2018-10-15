@@ -50,8 +50,6 @@ class TestModel(unittest.TestCase):
         }
         playlist = pywhatsnext.Playlist()
         playlist.init_from_body(original_body)
-        self.assertEqual(playlist.current_song, None)
-        playlist.next()
         self.assertEqual(playlist.current_song['id'], "asongid")
         playlist.next()
         self.assertEqual(playlist.current_song['id'], "asongid")
