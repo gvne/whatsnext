@@ -3,10 +3,10 @@ import { DOCUMENT } from '@angular/common';
 import { Router, NavigationStart, DefaultUrlSerializer, Params } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-// import * as jwt_decode from "jwt-decode";
+import * as jwt_decode from "jwt-decode";
 
 import { authConfig, storageKeys } from './constants';
 import { AUTH_CLIENT_ID, AUTH_CLIENT_SECRET } from './keys';
@@ -23,8 +23,6 @@ export interface OAuthToken {
   providedIn: 'root'
 })
 export class AuthService {
-  private token: OAuthToken = null;
-
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -33,47 +31,94 @@ export class AuthService {
 
   getOAuthToken(): Observable<OAuthToken> {
     // try to read the token from localStorage
+    let token = this.readOAuthToken();
+    if (token) {
+      return token;
+    }
+
+    // initialize an Observable<Observable<OAuthToken>>
+    // try reading the queryParams
+    return this.getQueryToken().pipe(
+      switchMap (
+        // once obained, if we have a code, try to exchange it for a token.
+        // if we don't, redirect to the login page
+        queryParams => {
+          if (!('code' in queryParams)) {
+            this.redirectToLoginPage();
+          }
+          return this.getOAuthTokenFromCode(queryParams['code']).pipe(
+            // once we obtain the auth token from the code, we save it
+            // in our members
+            map(
+              token => {
+                this.writeOAuthToken(token);
+                return token;
+              }
+            )
+          );
+        }
+      )
+    );
+  }
+
+  getUserID(): Observable<string> {
+    return this.getOAuthToken().pipe(
+      map(
+        token => {
+          let jwtToken = jwt_decode(token.access_token);
+          return jwtToken.sub;
+        }
+      )
+    );
+  }
+
+  logout() {
+    this.writeOAuthToken(null);
+    // TODO: reload the page ?
+  }
+
+  private writeOAuthToken(token: OAuthToken) {
+    if (!token) {
+      localStorage.removeItem(storageKeys.authToken);
+      return;
+    }
+    localStorage.setItem(storageKeys.authToken, JSON.stringify(token));
+  }
+
+  private readOAuthToken(): Observable<OAuthToken> {
     let tokenJSON = localStorage.getItem(storageKeys.authToken);
     if (tokenJSON) {
+      let token = JSON.parse(tokenJSON);
+      return this.refreshToken(token);
+    }
+    return null;
+  }
+
+  private refreshToken(token: OAuthToken): Observable<OAuthToken> {
+    let jwtToken = jwt_decode(token.access_token);
+    var currentTime = Date.now() / 1000;
+    // in case we don't need to refresh it, just return it as an observable
+    if (jwtToken.exp >= currentTime) {
       return new Observable((observer) => {
-        observer.next(JSON.parse(tokenJSON));
+        observer.next(token);
         observer.complete();
         return () => {};
       });
     }
 
-    // initialize an Observable<Observable<OAuthToken>>
-    let future = this.getQueryToken().pipe(
-      map (
-        queryParams => {
-          if (!('code' in queryParams)) {
-            this.redirectToLoginPage();
-          }
-          return this.getOAuthTokenFromCode(queryParams['code']);
-        }
-      )
+    // else we need to try refreshing it
+    console.log("Refreshing the token...");
+    const httpOptions = {
+      headers: this.makeAuthenticationHeaders()
+    };
+    // the refreshed token comes back with no refresh_token. We don't want to
+    // save it then. just return the observable
+    return this.http.post<OAuthToken>(
+      authConfig.tokenEndpoint,
+      "grant_type=refresh_token" +
+      "&refresh_token=" + token.refresh_token,
+      httpOptions
     );
-
-    // make an Observable<OAuthToken> from Observable<Observable<OAuthToken>>
-    return new Observable((observer) => {
-      future.subscribe(
-        result => {
-          result.subscribe(
-            token => {
-              this.setOAuthToken(token);
-              observer.next(token);
-              observer.complete();
-            }
-          );
-        }
-      );
-      return () => {};
-    });
-  }
-
-  private setOAuthToken(token) {
-    localStorage.setItem(storageKeys.authToken, JSON.stringify(token));
-    this.token = token;
   }
 
   private getQueryToken(): Observable<Params> {
@@ -111,14 +156,16 @@ export class AuthService {
                                   "&redirect_uri=" + this.getRedirectURI()
   }
 
-  private getOAuthTokenFromCode(code): Observable<OAuthToken> {
+  private makeAuthenticationHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': "Basic " + btoa(AUTH_CLIENT_ID + ":" + AUTH_CLIENT_SECRET),
+      'content-type': 'application/x-www-form-urlencoded'
+    });
+  }
+  private getOAuthTokenFromCode(code: string): Observable<OAuthToken> {
     const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': "Basic " + btoa(AUTH_CLIENT_ID + ":" + AUTH_CLIENT_SECRET),
-        'content-type': 'application/x-www-form-urlencoded'
-      })
+      headers: this.makeAuthenticationHeaders()
     };
-
     return this.http.post<OAuthToken>(
       authConfig.tokenEndpoint,
       "grant_type=authorization_code" +
