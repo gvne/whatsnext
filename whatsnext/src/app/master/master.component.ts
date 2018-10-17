@@ -21,7 +21,6 @@ export class MasterComponent implements OnInit {
   createPlaylist() {
     this.playlistService.createPlaylist().subscribe(
       playlist => {
-        this.playlistId = playlist.id;
         this.startCurrentVideo();
       }
     );
