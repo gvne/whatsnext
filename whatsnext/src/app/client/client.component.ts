@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 
-import { LobbyService } from '../lobby.service';
+import { PlaylistService } from '../playlist.service';
 import { SearchService } from '../search.service';
 import { storageKeys } from '../constants';
 
@@ -12,49 +12,31 @@ import { storageKeys } from '../constants';
   styleUrls: ['./client.component.css']
 })
 export class ClientComponent implements OnInit {
-  private lobbyId: string = null;
-
-  private successMessage: string;
-  private errorMessage: string;
-
-  private lobbyIdForm: FormControl;
+  private playlistIdForm: FormControl;
   private searchResult: Array<Object>;
 
   constructor(
-    private lobbyService: LobbyService,
+    private playlistService: PlaylistService,
     private searchService: SearchService,
     public snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
-    this.lobbyIdForm =  new FormControl('');
-
-    // use the previously set lobby Id
-    let previousLobbyId = localStorage.getItem(storageKeys.clientLobbyId);
-    if (previousLobbyId) {
-      this.lobbyId = previousLobbyId;
-      this.lobbyIdForm.setValue(this.lobbyId);
-    }
+    this.playlistIdForm =  new FormControl('');
   }
 
-  joinLobby() {
-    localStorage.setItem(storageKeys.clientLobbyId, this.lobbyIdForm.value);
-    this.lobbyId = this.lobbyIdForm.value;
+  joinPlaylist() {
+    this.playlistService.connectToPlaylist(this.playlistIdForm.value);
   }
 
   appendVideo(videoId) {
-    if (!this.lobbyId) {
-      return;
-    }
-    let future = this.lobbyService.appendVideoById(this.lobbyId, videoId);
+    let future = this.playlistService.appendVideo(videoId);
     future.subscribe(
       playlist => {
         this.snackBar.open("Successfuly appended !");
-        setTimeout(() => { this.successMessage = null; }, 5000);
       },
       error => {
         this.snackBar.open("Something went wrong...");
-        setTimeout(() => { this.errorMessage = null; }, 5000);
       }
     );
   }

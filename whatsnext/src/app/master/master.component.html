@@ -2,13 +2,13 @@
   <div>
     <button
       mat-flat-button
-      (click)="newLobby()">
+      (click)="createPlaylist()">
         Create a new lobby
       </button>
   </div>
 
-  <div *ngIf="lobbyId">
-    Invite people to join your lobby with ID: {{lobbyId}}
+  <div *ngIf="playlistService.playlistId">
+    Invite people to join your lobby with ID: {{ playlistService.playlistId }}
     <p>
     <youtube-player
       (ready)="savePlayer($event)"

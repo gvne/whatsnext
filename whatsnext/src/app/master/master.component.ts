@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { LobbyService } from '../lobby.service';
+import { PlaylistService } from '../playlist.service';
 import { storageKeys } from '../constants';
 
 @Component({
@@ -9,76 +9,39 @@ import { storageKeys } from '../constants';
   styleUrls: ['./master.component.css']
 })
 export class MasterComponent implements OnInit {
-  private lobbyId: string = null;
   private videoId: string;
   player: YT.Player;
 
   constructor(
-    private lobbyService: LobbyService
+    private playlistService: PlaylistService
   ) { }
 
-  ngOnInit() {
-    let previousLobbyId = localStorage.getItem(storageKeys.masterLobbyId);
-    if (previousLobbyId) {
-      this.setLobbyId(previousLobbyId);
-    }
-  }
+  ngOnInit() { }
 
-  newLobby() {
-    let future = this.lobbyService.createLobby();
-    future.subscribe(
-      playlist => { this.setLobbyId(playlist.id); },
-      error => { }
-    );
-  }
-
-  setLobbyId(lobbyId) {
-    localStorage.setItem(storageKeys.masterLobbyId, lobbyId);
-    this.lobbyId = lobbyId;
-    this.updateInterface();
-  }
-
-  updateInterface() {
-    // don't update if the lobbyId isn't set
-    if (!this.lobbyId) {
-      return;
-    }
-
-    console.log("updating the interface !");
-    let future = this.lobbyService.getCurrentVideo(this.lobbyId);
-    future.subscribe(
-      song => {
-        this.setCurrentSong(song);
-        this.scheduleNextUpdate();
-      },
-      error => {
-        this.requestNext();
-        this.scheduleNextUpdate();
+  createPlaylist() {
+    this.playlistService.createPlaylist().subscribe(
+      playlist => {
+        this.playlistId = playlist.id;
+        this.startCurrentVideo();
       }
     );
   }
 
-  scheduleNextUpdate() {
-    setTimeout(() => { this.updateInterface(); }, 5000);
-  }
-
-  setCurrentSong(song) {
-    if (this.videoId !== song.youtube_id) {
-      // if the current video changed, update it
-      this.startVideo(song.youtube_id);
-    } else if (this.player.getPlayerState() === YT.PlayerState.ENDED) {
-      // If current video is still the same but the player has ended, we are in
-      // the case of the end of a song. We will ask for another one until one
-      // is available.
-      this.requestNext();
+  private startCurrentVideo() {
+    let currentVideo = this.playlistService.getCurrentVideo();
+    console.log("Trying to start current video..." + currentVideo);
+    // if no current video
+    if (!currentVideo) {
+      // retry in a second
+      setTimeout(() => { this.startCurrentVideo(); }, 1000);
+      return;
     }
+    this.startVideo(currentVideo.youtube_id);
   }
 
   requestNext() {
-    // post to the next enpoint and set the current video from obtained result
-    this.lobbyService.moveToNext(this.lobbyId).subscribe(
-      song => {},
-      error => {}
+    this.playlistService.moveToNextVideo().subscribe(
+      song => { this.startVideo(song.youtube_id); }
     );
   }
 
@@ -86,6 +49,7 @@ export class MasterComponent implements OnInit {
   // YoutubePlayer functions
   // -------------------------------
   startVideo(videoId) {
+    console.log("Starting video " + videoId);
     if (this.videoId === videoId) {
       // no need to update if the current id hasn't changed
       return;

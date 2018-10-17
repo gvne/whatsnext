@@ -1,17 +1,17 @@
 <div fxLayout="column">
-  <form (ngSubmit)="joinLobby()">
+  <form (ngSubmit)="joinPlaylist()">
       <mat-form-field>
         <div fxLayout="row">
           <input type="text"
                  placeholder="Lobby ID"
                  matInput
-                 [formControl]="lobbyIdForm">
+                 [formControl]="playlistIdForm">
           <button mat-flat-button>Join !</button>
         </div>
       </mat-form-field>
   </form>
 
-  <div *ngIf="lobbyId">
+  <div *ngIf="playlistService.playlistId">
     <app-searchbar
       (search)="onSearch($event)">
     </app-searchbar>
