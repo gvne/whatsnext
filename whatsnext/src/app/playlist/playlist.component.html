@@ -1,0 +1,21 @@
+
+<!-- <div *ngIf="!playlistService.playlistId">
+  You aren't connect to a playlist
+</div>
+<div *ngIf="playlistService.playlistId">
+  Playlist !
+  <div *ngFor="let element of playlistService.songs">
+    <p>ID: {{ element.youtube_id }}</p>
+  </div>
+</div> -->
+<div>Yeah i'm a playlist</div>
+<div *ngIf="playlist">
+  <div *ngFor="let element of playlist.songs">
+    <div *ngIf="element.youtube_id === playlist.current_song.youtube_id; else notCurrent">
+      <p>Current song: {{ element.youtube_id }}</p>
+    </div>
+    <ng-template #notCurrent>
+      <p>{{ element.youtube_id }}</p>
+    </ng-template>
+  </div>
+</div>
