@@ -11,6 +11,8 @@ import {
   MatSnackBarModule,
   MAT_SNACK_BAR_DEFAULT_OPTIONS
 } from '@angular/material/snack-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms'
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -26,6 +28,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { WINDOW_PROVIDERS } from './window.provider';
 import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-video-detail.component';
+import { PlaylistComponent } from './playlist/playlist.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +37,7 @@ import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-vide
     ClientComponent,
     SearchbarComponent,
     YoutubeVideoDetailComponent,
+    PlaylistComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +50,8 @@ import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-vide
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatSidenavModule,
+    MatIconModule,
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,

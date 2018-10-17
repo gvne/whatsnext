@@ -1,7 +1,26 @@
-<div class="container"
-     fxLayoutAlign="center">
-  <div fxLayout="column">
-    <app-client></app-client>
-    <app-master></app-master>
-  </div>
-</div>
+<!-- <button (click)="logout()">Logout</button> -->
+
+<mat-sidenav-container>
+  <mat-sidenav #sidenav
+               mode="side"
+               opened=true>
+    <app-playlist
+      [playlist]="playlistService.playlist">
+    </app-playlist>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon *ngIf="sidenav.opened">chevron_left</mat-icon>
+      <mat-icon *ngIf="!sidenav.opened">chevron_right</mat-icon>
+    </button>
+    <div class="container"
+         fxLayoutAlign="center">
+      <div fxLayout="column">
+        <app-client></app-client>
+        <app-master></app-master>
+      </div>
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from './auth.service';
+import { PlaylistService } from './playlist.service';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +13,22 @@ export class AppComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private playlistService: PlaylistService,
   ) {}
 
   ngOnInit() {
     this.authService.getOAuthToken().subscribe(
-      token => { console.log(token);},
-      error => { console.log("Failed"); }
+      token => {
+        console.log("Token obtained !!");
+        console.log(token);
+      },
+      error => {
+        console.log("Couldn't get token...");
+      }
     );
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
