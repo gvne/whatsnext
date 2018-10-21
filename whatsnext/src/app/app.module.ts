@@ -13,6 +13,9 @@ import {
 } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { ReactiveFormsModule } from '@angular/forms'
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -29,6 +32,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { WINDOW_PROVIDERS } from './window.provider';
 import { YoutubeVideoDetailComponent } from './youtube-video-detail/youtube-video-detail.component';
 import { PlaylistComponent } from './playlist/playlist.component';
+import { SongDetailComponent } from './song-detail/song-detail.component';
+
+import { httpInterceptorProviders } from './http-interceptors/index';
 
 @NgModule({
   declarations: [
@@ -38,6 +44,7 @@ import { PlaylistComponent } from './playlist/playlist.component';
     SearchbarComponent,
     YoutubeVideoDetailComponent,
     PlaylistComponent,
+    SongDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +59,9 @@ import { PlaylistComponent } from './playlist/playlist.component';
     MatSnackBarModule,
     MatSidenavModule,
     MatIconModule,
+    MatListModule,
+    MatCardModule,
+    MatGridListModule,
     ReactiveFormsModule,
     FormsModule,
     BrowserAnimationsModule,
@@ -59,7 +69,8 @@ import { PlaylistComponent } from './playlist/playlist.component';
   ],
   providers: [
     WINDOW_PROVIDERS,
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 3000}}
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 3000}},
+    httpInterceptorProviders
   ],
   bootstrap: [AppComponent]
 })
