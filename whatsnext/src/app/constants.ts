@@ -5,6 +5,7 @@ export const SEARCH_AUTOCOMPLETE_API_URL = "https://suggestqueries.google.com/co
 
 // Youtube Data API
 export const YOUTUBE_API_SEARCH_ENDPOINT = "https://www.googleapis.com/youtube/v3/search"
+export const YOUTUBE_VIDEO_DETAIL_ENDPOINT= "https://www.googleapis.com/youtube/v3/videos"
 
 export const authConfig = {
   loginEndpoint: "https://whatnext.auth.us-east-1.amazoncognito.com/login",
@@ -13,7 +14,5 @@ export const authConfig = {
 
 // storage keys
 export const storageKeys = {
-  masterLobbyId: "masterLobbyId",
-  clientLobbyId: "clientLobbyId",
   authToken: "authToken"
 };
