@@ -9,13 +9,15 @@
   </div>
 </div> -->
 <div>Yeah i'm a playlist</div>
-<div *ngIf="playlist">
-  <div *ngFor="let element of playlist.songs">
-    <div *ngIf="element.youtube_id === playlist.current_song.youtube_id; else notCurrent">
-      <p>Current song: {{ element.youtube_id }}</p>
-    </div>
-    <ng-template #notCurrent>
-      <p>{{ element.youtube_id }}</p>
-    </ng-template>
-  </div>
-</div>
+<mat-grid-list *ngIf="playlist" cols="1" rowHeight="100px">
+  <mat-grid-tile *ngFor="let song of playlist.songs">
+    <app-song-detail [song]="song"></app-song-detail>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<!-- <mat-list *ngIf="playlist" class="app-class">
+  <mat-list-item *ngFor="let song of playlist.songs">
+    <app-song-detail [song]="song"></app-song-detail>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list> -->

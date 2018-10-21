@@ -1,9 +1,14 @@
-<div (click)=clicked()>
-  <img
-    [src]="thumbnail.url"
-    [height]="thumbnail.height"
-    [width]="thumbnail.width"/>
+<mat-grid-list cols="4" (click)=clicked()>
+  <mat-grid-tile colspan=1>
+    <img [src]="thumbnail.url">
+  </mat-grid-tile>
 
-  <h1>{{ snippet.title }}</h1>
-  {{ snippet.description }}
-</div>
+  <mat-grid-tile colspan=3>
+    <mat-card style="width: 100%">
+      <mat-card-header>
+        <mat-card-title>{{ snippet.title }}</mat-card-title>
+        <mat-card-subtitle>{{ snippet.description }}</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

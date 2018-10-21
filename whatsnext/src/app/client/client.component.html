@@ -16,13 +16,15 @@
       (search)="onSearch($event)">
     </app-searchbar>
 
-    <div>
+    <mat-grid-list cols="1" rowHeight="120px">
+      <mat-grid-tile *ngFor="let element of searchResult">
         <app-youtube-video-detail
-          *ngFor="let element of searchResult"
+          style="width: 100%"
           [video]="element"
           (selected)="appendVideo($event)">
         </app-youtube-video-detail>
-    </div>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
 
 </div>
